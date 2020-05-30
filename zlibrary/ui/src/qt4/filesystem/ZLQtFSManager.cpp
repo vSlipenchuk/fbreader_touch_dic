@@ -48,4 +48,5 @@ void ZLQtFSManager::normalizeRealPath(std::string &path) const {
 		static const std::string replacement = (const char*)QDir::homePath().toUtf8();
 	  path = replacement + path.substr(1);
 	}
+	ZLUnixFSManager::normalizeRealPath(path);
 }

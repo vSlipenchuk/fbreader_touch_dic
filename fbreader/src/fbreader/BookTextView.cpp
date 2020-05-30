@@ -29,6 +29,8 @@
 
 #include "BookTextView.h"
 #include "FBReader.h"
+#include "FBReaderActions.h"
+#include <stdio.h>
 
 #include "../bookmodel/FBTextKind.h"
 #include "../bookmodel/BookModel.h"
@@ -303,6 +305,7 @@ bool BookTextView::_onStylusPress(int x, int y) {
 	return false;
 }
 
+
 bool BookTextView::onStylusClick(int x, int y, int count) {
 	FBReader &fbreader = FBReader::Instance();
 	const ZLTextElementRectangle *rectangle = textArea().elementByCoordinates(x, y);
@@ -312,6 +315,21 @@ bool BookTextView::onStylusClick(int x, int y, int count) {
 		if (getHyperlinkInfo(*rectangle, id, type)) {
 			fbreader.tryShowFootnoteView(id, type);
 			return true;
+		}
+		
+		int gap;
+		
+		printf("onStylusClick = %d,%d\n",x,y);
+	
+		if (true ) { // todo - add a check option latter
+			const std::string txt = word(*rectangle);
+			if (!txt.empty()) {
+				char buf[512];
+				snprintf(buf,sizeof(buf),"/home/on/dic \"%s\"",txt.c_str());
+				system(buf);
+				//fbreader.openInDictionary(txt);
+				return true;
+			}
 		}
 
 		if (fbreader.isDictionarySupported() &&

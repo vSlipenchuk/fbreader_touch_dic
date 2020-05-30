@@ -29,6 +29,7 @@
 #include "FBReaderActions.h"
 #include "../options/FBOptions.h"
 #include "../options/FBTextStyle.h"
+#include <stdio.h>
 
 static const std::string INDICATOR = "Indicator";
 
@@ -96,14 +97,15 @@ shared_ptr<ZLTextPositionIndicatorInfo> FBView::indicatorInfo() const {
 }
 
 void FBView::doTapScrolling(int y) {
-	if (2 * y < context().height()) {
-		FBReader::Instance().doAction(ActionCode::TAP_SCROLL_BACKWARD);
-	} else {
-		FBReader::Instance().doAction(ActionCode::TAP_SCROLL_FORWARD);
-	}
+	//if (2 * y < context().height()) {
+	//	FBReader::Instance().doAction(ActionCode::TAP_SCROLL_BACKWARD);
+	//} else {
+	//	FBReader::Instance().doAction(ActionCode::TAP_SCROLL_FORWARD);
+	//}
 }
 
-bool FBView::onFingerTap(int, int y) {
+bool FBView::onFingerTap(int x, int y) {
+	printf("onFingerTap x=%d,y=%d\n",x,y);
 	doTapScrolling(y);
 	return true;
 }
@@ -168,6 +170,21 @@ void FBView::TapScroller::run() {
 
 bool FBView::onStylusRelease(int x, int y) {
 	const bool hadSelection = !selectionModel().isEmpty();
+	
+		int gap=50;
+		FBReader &fbreader = FBReader::Instance();
+		//printf("onStylusRelease = %d,%d\n",x,y);
+		
+		if ( x<gap) {
+			fbreader.doAction(ActionCode::PAGE_SCROLL_BACKWARD);
+			//printf("go back!\n");
+			return true;
+			}
+		if (x>context().width()-gap) {
+			//printf("go forw\n");
+			fbreader.doAction(ActionCode::PAGE_SCROLL_FORWARD);
+			return true;
+			}
 
 	if (!myTapScroller.isNull()) {
 		ZLTimeManager::Instance().removeTask(myTapScroller);
@@ -182,7 +199,7 @@ bool FBView::onStylusRelease(int x, int y) {
 		return true;
 	}
 
-	FBReader &fbreader = FBReader::Instance();
+	//FBReader &fbreader = FBReader::Instance();
 	myIsReleasedWithoutMotion =
 		myIsReleasedWithoutMotion && std::abs(x - pressedX()) <= 5 && std::abs(y - pressedY()) <= 5;
 	if (!hadSelection && isReleasedWithoutMotion() &&
@@ -197,8 +214,10 @@ bool FBView::onStylusRelease(int x, int y) {
 	return false;
 }
 
-bool FBView::_onStylusRelease(int, int) {
-	return false;
+#include <stdio.h>
+bool FBView::_onStylusRelease(int x, int y) {
+
+	return false; 
 }
 
 bool FBView::onStylusMove(int x, int y) {
