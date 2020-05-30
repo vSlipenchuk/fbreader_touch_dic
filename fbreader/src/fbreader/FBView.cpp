@@ -171,20 +171,7 @@ void FBView::TapScroller::run() {
 bool FBView::onStylusRelease(int x, int y) {
 	const bool hadSelection = !selectionModel().isEmpty();
 	
-		int gap=50;
-		FBReader &fbreader = FBReader::Instance();
-		//printf("onStylusRelease = %d,%d\n",x,y);
-		
-		if ( x<gap) {
-			fbreader.doAction(ActionCode::PAGE_SCROLL_BACKWARD);
-			//printf("go back!\n");
-			return true;
-			}
-		if (x>context().width()-gap) {
-			//printf("go forw\n");
-			fbreader.doAction(ActionCode::PAGE_SCROLL_FORWARD);
-			return true;
-			}
+
 
 	if (!myTapScroller.isNull()) {
 		ZLTimeManager::Instance().removeTask(myTapScroller);
@@ -199,7 +186,45 @@ bool FBView::onStylusRelease(int x, int y) {
 		return true;
 	}
 
-	//FBReader &fbreader = FBReader::Instance();
+	FBReader &fbreader = FBReader::Instance();
+	
+		int gap=50;
+	//	FBReader &fbreader = FBReader::Instance();
+	//	printf("onStylusRelease = %d,%d\n",x,y);
+		if (y<gap) {
+			if (x>context().width()-gap) { // up right corner
+				  fbreader.doAction(ActionCode::TOGGLE_FULLSCREEN);
+				  return true;
+			          } 
+			if (x<gap) { // left up corner
+				  fbreader.doAction(ActionCode::INCREASE_FONT);
+			          }
+			return true;
+			}
+		if (y>context().height()-gap) {
+			if (x<gap) { // left down cornet
+				 fbreader.doAction(ActionCode::DECREASE_FONT);
+				return true;
+			  }
+			if (x>context().width()-gap) { 
+			         //fbreader.doAction(ActionCode::SHOW_TOC);
+				return true;
+			}
+			return true;
+			}
+		if ( x<gap) {
+			fbreader.doAction(ActionCode::PAGE_SCROLL_BACKWARD);
+			//printf("go back!\n");
+			return true;
+			}
+		if (x>context().width()-gap) {
+			//printf("go forw\n");
+		        fbreader.doAction(ActionCode::PAGE_SCROLL_FORWARD);
+			//if (!fbreader.isFullScreen())  fbreader.doAction(ActionCode::FULLSCREEN_ON);
+			//fbreader.setFullScreen(true);
+			return true;
+			}
+			
 	myIsReleasedWithoutMotion =
 		myIsReleasedWithoutMotion && std::abs(x - pressedX()) <= 5 && std::abs(y - pressedY()) <= 5;
 	if (!hadSelection && isReleasedWithoutMotion() &&

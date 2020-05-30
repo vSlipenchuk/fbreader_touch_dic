@@ -319,7 +319,7 @@ bool BookTextView::onStylusClick(int x, int y, int count) {
 		
 		int gap;
 		
-		printf("onStylusClick = %d,%d\n",x,y);
+		//printf("onStylusClick = %d,%d\n",x,y);
 	
 		if (true ) { // todo - add a check option latter
 			const std::string txt = word(*rectangle);
